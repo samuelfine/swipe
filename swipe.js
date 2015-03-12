@@ -1,5 +1,5 @@
-/*
- * Swipe 2.0.3
+/*!
+ * Swipe 2.0.4
  *
  * Brad Birdsall & Felix Liu
  * Copyright 2015, MIT License
@@ -7,7 +7,7 @@
 */
 
 // if the module has no dependencies, the above pattern can be simplified to
-!(function (root, factory) {
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
     define([], function(){
@@ -58,6 +58,7 @@
     var index = parseInt(options.startSlide, 10) || 0;
     var speed = options.speed || 300;
     options.continuous = options.continuous !== undefined ? options.continuous : true;
+    var isDisabled = options.disabled || false;
 
     // AutoRestart option: auto restart slideshow after user's touch event
     options.autoRestart = options.autoRestart !== undefined ? options.autoRestart : true;
@@ -160,8 +161,8 @@
 
     function slide(to, slideSpeed) {
 
-      // do nothing if already on requested slide
-      if (index === to) {
+      // Do nothing if requested slide is current slide, or if slider is disabled
+      if (index === to || options.disabled) {
         return;
       }
 
@@ -329,6 +330,11 @@
 
       },
       start: function(event) {
+
+        // Exit if slider is disabled
+        if(options.disabled) {
+          return;
+        }
 
         var touches = event.touches[0];
 
@@ -565,7 +571,6 @@
 
         // cancel slideshow
         stop();
-
         slide(to, speed);
 
       },
@@ -608,6 +613,18 @@
 
         // return total number of slides
         return length;
+      },
+      disable: function() {
+
+        options.disabled = true;
+        return isDisabled;
+
+      },
+      enable: function() {
+
+        options.disabled = false;
+        return(options.disabled === false ? true : false);
+
       },
       kill: function() {
 
